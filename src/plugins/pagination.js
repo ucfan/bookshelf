@@ -172,7 +172,12 @@ module.exports = function paginationPlugin (bookshelf) {
           return (notNeededQueries.indexOf(statement.type) > -1) ||
             statement.grouping === 'columns';
         });
-        qb.countDistinct.apply(qb, [`${tableName}.${idAttribute}`]);
+
+        if (Array.isArray(idAttribute)) {
+          qb.countDistinct.apply(qb, idAttribute.map(id => `${tableName}.${id}`));
+        } else {
+          qb.countDistinct.apply(qb, [`${tableName}.${idAttribute}`]);
+        }
 
       }).fetchAll().then(result => {
 
